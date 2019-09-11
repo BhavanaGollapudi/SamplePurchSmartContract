@@ -1,0 +1,526 @@
+{
+  "ApplicationName": "AllInOnePO3",
+  "DisplayName": "AllInOnePO3",
+  "Description": "Allows creation of a PO for the P2P process that flows into receiving report, invoice, and settelment",
+  "ApplicationRoles": [
+    {
+      "Name": "BCOwner",
+      "Description": "User that creates PO and initiates process"
+    },
+    {
+      "Name": "BCParticipantSupplier",
+      "Description": "User that accepts and ships requested PO"
+    },
+    {
+      "Name": "BCShipper",
+      "Description": "User that provides logistic services between Purchaser and Supplier"
+    }
+  ],
+  "Workflows": [
+      {
+          "Name": "AllInOnePO3",
+          "DisplayName": "AllInOnePO3",
+          "Description": "Handles the business logic for the P2P scenario",
+          "Initiators": [ "BCOwner" ],
+          "StartState": "Created",
+          "Properties": [
+              {
+                  "Name": "State",
+                  "DisplayName": "State",
+                  "Description": "Holds the state of the contract",
+                  "Type": {
+                      "Name": "state"
+                  }
+              },
+              {
+                  "Name": "ItemDescription",
+                  "DisplayName": "Item Description",
+                  "Description": "The description of the item",
+                  "Type": {
+                      "Name": "string"
+                  }
+
+              },
+              {
+                  "Name": "ItemNumber",
+                  "DisplayName": "Item Number",
+                  "Description": "Numerical code representing the item being purchased",
+                  "Type": {
+                      "Name": "int"
+                  }
+              },
+              {
+                  "Name": "ItemPrice",
+                  "DisplayName": "Item Price",
+                  "Description": "Price of the item",
+                  "Type": {
+                      "Name": "int"
+                  }
+          
+              },
+              {
+                  "Name": "ItemQuantity",
+                  "DisplayName": "Item Quantity",
+                  "Description": "Number of items to purchase",
+                  "Type": {
+                    "Name": "int"
+                  }
+              },
+              {
+                  "Name": "OrderTotal",
+                  "DisplayName": "Order Total",
+                  "Description": "Total for order",
+                  "Type": {
+                    "Name": "int"
+                  }
+              },
+              {
+                  "Name": "InstanceOwner",
+                  "DisplayName": "BC Owner",
+                  "Description": "User that creates PO and initiates process",
+                  "Type": {
+                      "Name": "BCOwner"
+                  }
+
+              },
+              {
+                  "Name": "InstanceSupplier",
+                  "DisplayName": "BC Participant Supplier",
+                  "Description": "User that accepts and ships requested PO",
+                  "Type": {
+                      "Name": "BCParticipantSupplier"
+                  }
+              },
+              {
+                  "Name": "InstanceShipper",
+                  "DisplayName": "BC Shipper",
+                  "Description": "User that provides logistic services between Purchaser and Supplier",
+                  "Type": {
+                      "Name": "BCShipper"
+                  }
+              },
+              {
+                  "Name": "ShipmentTracker",
+                  "DisplayName": "Tracking for Shipment",
+                  "Description": "Tracker used so parties can locate shipment",
+                  "Type": {
+                    "Name": "string"
+                  }
+              },
+              {
+                  "Name": "ShipmentStatus",
+                  "DisplayName": "Status of the shipment",
+                  "Description": "What the current state of the shipment is",
+                  "Type": {
+                    "Name": "string"
+                  }
+              },
+              {
+                  "Name": "PONumber",
+                  "DisplayName": "Purchase Order Reference",
+                  "Description": "Used to track in purchaser ERP",
+                  "Type": {
+                    "Name": "int"
+                  }
+              },
+              {
+                  "Name": "ReferenceNumber",
+                  "DisplayName": "Vendor Reference Number",
+                  "Description": "Used to track in vendor ERP",
+                  "Type": {
+                    "Name": "int"
+                  }
+              },
+              {
+                  "Name": "ShipAddress",
+                  "DisplayName": "Shipping Destination",
+                  "Description": "Location of shipping destination",
+                  "Type": {
+                    "Name": "string"
+                  }
+              },
+              {
+                  "Name": "Terms",
+                  "DisplayName": "Terms of contract",
+                  "Description": "The payment terms to be agreed upon",
+                  "Type": {
+                    "Name": "string"
+                  }
+              }
+          ],
+          "Constructor": {
+              "Parameters": [
+                  {
+                    "Name": "_ponumber",
+                    "DisplayName": "Purchase Order Reference",
+                    "Description": "Used to track in purchaser ERP",
+                    "Type": {
+                          "Name": "int"
+                      }
+                  },
+                  {
+                    "Name": "_shipaddress",
+                    "DisplayName": "Shipping Destination",
+                    "Description": "Location of shipping destination",
+                    "Type": {
+                        "Name": "string"
+                    }
+                  },
+                  {
+                      "Name": "_itemdescription",
+                      "Description": "The description of the item",
+                      "DisplayName": "Item Description",
+                      "Type": {
+                          "Name": "string"
+                      }
+                  },
+                  {
+                      "Name": "_itemnumber",
+                      "Description": "Number associated with this item",
+                      "DisplayName": "Item Number",
+                      "Type": {
+                          "Name": "int"
+                      }
+                  },
+                  {
+                      "Name": "_itemquantity",
+                      "Description": "Number of items to purchase",
+                      "DisplayName": "Order Quantity",
+                      "Type": {
+                        "Name": "int"
+                      }
+                  },
+                  {
+                      "Name": "_terms",
+                      "DisplayName": "Terms of contract",
+                      "Description": "The payment terms of the contract",
+                      "Type": {
+                        "Name": "string"
+                      }
+                  }
+              ]
+          },
+          "Functions": [
+            {
+              "Name": "Terminate",
+              "DisplayName": "Terminate PO",
+              "Description": "Used to cancel this particular instance of AllInOnePO3",
+              "Parameters": []
+            },
+			{
+              "Name": "OutOfStockF",
+              "DisplayName": "Out Of Stock",
+              "Description": "Used to cancel this particular instance of AllInOnePO3 due to product being out of stock",
+              "Parameters": []
+            },
+			{
+              "Name": "NoReceive",
+              "DisplayName": "Not received",
+              "Description": "Used to reorder the instance of AllInOnePO3 when order not recieved",
+              "Parameters": []
+            },
+            {
+              "Name": "Accept",
+              "DisplayName": "Accept PO",
+              "Description": "Approves this purchase order",
+              "Parameters": [
+                {
+                  "Name": "_referencenumber",
+                  "DisplayName": "Vendor Reference Number",
+                  "Description": "Used to track in vendor ERP",
+                  "Type": {
+                    "Name": "int"
+                  }
+                }
+              ]
+            },
+			{
+              "Name": "InputPrice",
+              "DisplayName": "Input Price - per item",
+              "Description": "Supplier inputs price",
+              "Parameters": [
+                {
+                  "Name": "_itemprice",
+                  "DisplayName": "Input price - per item",
+                  "Description": "Input price - per item",
+                  "Type": {
+                    "Name": "int"
+                  }
+                }
+              ]
+            },
+			{
+              "Name":"Proceed",
+              "DisplayName": "Proceed to order",
+              "Description": "Owner agrees to order total",
+              "Parameters": [
+				{
+					"Name": "_itemprice",
+                  "DisplayName": "Item Price",
+                  "Description": "Price per item as indicated by the Supplier",
+                  "Type": {
+                    "Name": "int"
+                  }
+				},
+				{
+					"Name": "_itemquantity",
+                  "DisplayName": "Item Quantity",
+                  "Description": "Quantity requested by the Owner/Buyer",
+                  "Type": {
+                    "Name": "int"
+                  }
+				},
+			  ]
+            },
+            {
+              "Name": "Pack",
+              "DisplayName": "Order Packed",
+              "Description": "Order is packed and awaiting shipment",
+              "Parameters": [
+                {
+                  "Name": "_itemnumber",
+                  "DisplayName": "Item Number",
+                  "Description": "Numerical code representing the item being purchased",
+                  "Type": {
+                    "Name": "int"
+                  }
+                },
+                {
+                  "Name": "_itemquantity",
+                  "DisplayName": "Item Quantity",
+                  "Description": "Quantity of item purchased",
+                  "Type": {
+                    "Name": "int"
+                  }
+                }
+              ]
+            },
+            {
+              "Name": "Ship",
+              "DisplayName": "Order Shipped",
+              "Description": "Order is shipped",
+              "Parameters": [
+                {
+                  "Name": "_shipmenttracker",
+                  "Description": "Tracker associated with this shipment",
+                  "DisplayName": "Shipment Tracker",
+                  "Type": {
+                    "Name": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "Name": "UpdateTracking",
+              "DisplayName": "Update Tracking",
+              "Description": "Used to update shipment tracking",
+              "Parameters": [
+                {
+                  "Name": "_shipmentstatus",
+                  "Description": "Update to status of shipment",
+                  "DisplayName": "Shipment Status",
+                  "Type": {
+                    "Name": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "Name": "Receive",
+              "DisplayName": "Order Received",
+              "Description": "Received the order",
+              "Parameters": []
+            },
+            {
+              "Name":"Agree",
+              "DisplayName": "Order Agreed",
+              "Description": "Order details are agreed upon",
+              "Parameters": []
+            },
+          ],
+          "States": [
+              {
+                "Name": "Created",
+                "DisplayName": "Created",
+                "Description": "The initial creation of the purchase order",
+                "PercentComplete": 10,
+                "Style": "Success",
+                "Transitions": [
+					  {
+                    "AllowedRoles": [ "BCParticipantSupplier" ],
+                    "AllowedInstanceRoles": [],
+                    "Description": "Cancels this instance of purchase order",
+                    "Function": "OutOfStockF",
+                    "NextStates": [ "OutOfStock" ],
+                    "DisplayName": "Terminate-OOS"
+                  },
+                  {
+                    "AllowedRoles": [ "BCParticipantSupplier" ],
+                    "AllowedInstanceRoles": [],
+                    "Description": "Creates this instance of purchase order",
+                    "Function": "Accept",
+                    "NextStates": [ "Accepted" ],
+                    "DisplayName": "Create PO"
+                  },
+                  {
+                    "AllowedRoles": [ "BCParticipantSupplier" ],
+                    "AllowedInstanceRoles": [ "InstanceOwner", "InstanceSupplier" ],
+                    "Description": "Cancels this instance of purchase order",
+                    "Function": "Terminate",
+                    "NextStates": [ "Terminated" ],
+                    "DisplayName": "Terminate PO"
+                  },
+                ]
+              },	
+              {
+                "Name": "Accepted",
+                "DisplayName": "PO Accepted",
+                "Description": "Purchase order has been accepted",
+                "PercentComplete": 20,
+                "Style": "Success",
+                "Transitions": [
+                  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceSupplier" ],
+                    "Description": "input price",
+                    "Function": "InputPrice",
+                    "NextStates": [ "PaymentConf" ],
+                    "DisplayName": "Input Price - per item"
+                  },
+                ]
+		      },
+			  {
+                "Name": "OutOfStock",
+                "DisplayName": "OutOfStock",
+                "Description": "Terminated due to OOS",
+                "PercentComplete": 40,
+                "Style": "Success",
+                "Transitions": []	
+			  },
+			  {
+                "Name": "PaymentConf",
+                "DisplayName": "Payment confirmed",
+                "Description": "Order total agreed",
+                "PercentComplete": 30,
+                "Style": "Success",
+                "Transitions": [
+                  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceOwner" ],
+                    "Description": "Agrees to order total",
+                    "Function": "Proceed",
+                    "NextStates": [ "Accepted" ],
+                    "DisplayName": "Proceed with order",
+                  },
+                  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceOwner" ],
+                    "Description": "Disagrees to order total",
+                    "Function": "Terminate",
+                    "NextStates": [ "Terminated" ],
+                    "DisplayName": "Terminate PO"
+                  }
+                ]
+			  },	
+              {
+                "Name": "Packed",
+                "DisplayName": "Packed",
+                "Description": "Order is packed and awaiting shipment",
+                "PercentComplete": 50,
+                "Style": "Success",
+                "Transitions": [
+                  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceOwner", "InstanceSupplier" ],
+                    "Description": "Cancels this instance of purchase order",
+                    "Function": "Terminate",
+                    "NextStates": [ "Terminated" ],
+                    "DisplayName": "Terminate PO"
+                  },
+                  {
+                    "AllowedRoles": [ "BCShipper" ],
+                    "AllowedInstanceRoles": [ "InstanceShipper" ],
+                    "Description": "Ship the order",
+                    "Function": "Ship",
+                    "NextStates": [ "Shipped" ],
+                    "DisplayName": "Ship"
+                  }
+                ]
+              },
+              {
+                "Name": "Shipped",
+                "DisplayName": "Shipped",
+                "Description": "Order is shipped",
+                "PercentComplete" : 60,
+                "Style": "Success",
+                "Transitions": [
+                  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceShipper" ],
+                    "Description": "Update Tracking",
+                    "Function": "UpdateTracking",
+                    "NextStates": [ "Shipped" ],
+                    "DisplayName": "Update Tracking"
+                  },
+                  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceOwner" ],
+                    "Description": "Received",
+                    "Function": "Receive",
+                    "NextStates": [ "Received" ],
+                    "DisplayName": "Shipment Received"
+                  },
+				  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceOwner" ],
+                    "Description": "Not Received",
+                    "Function": "NoReceive",
+                    "NextStates": [ "Created" ],
+                    "DisplayName": "Shipment not Received"
+                  }
+                ]
+              },
+              {
+                "Name": "Received",
+                "DisplayName": "Received",
+                "PercentComplete": 70,
+                "Style": "Success",
+                "Transitions": [
+                  {
+                    "AllowedRoles": [],
+                    "AllowedInstanceRoles": [ "InstanceSupplier" ],
+                    "Description": "Received the order",
+                    "Function": "Agree",
+                    "NextStates": [ "Agreed" ],
+                    "DisplayName": "Agreed on changes before invoicing"
+                  }
+                ]
+              },        
+              {
+                "Name": "Agreed",
+                "DisplayName": "Total okay?",
+                "Description": "Supplier agrees to proceed to payment",
+                "PercentComplete": 80,
+                "Style": "Success",
+                "Transitions": []
+              },
+              {
+                "Name": "Terminated",
+                "DisplayName": "Terminated",
+                "Description": "Purchase order has been canceled",
+                "PercentComplete": 100,
+                "Style": "Failure",
+                "Transitions": []
+              },
+              {
+                "Name": "Resolve",
+                "DisplayName": "Resolve",
+                "Description": "Difference in item quantity or number",
+                "PercentComplete": 100,
+                "Style": "Success",
+                "Transitions": []
+              }
+            ]
+      }
+  ]
+}
